@@ -1,0 +1,110 @@
+{% extends 'account/AccountBase.html' %}
+{% load widget_tweaks %}
+{% load humanize %}
+{% block head_title %}پرداخت{% endblock %}
+{% block page_title %}
+<li>پرداخت</li>{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 m-b30">
+        <div class="widget-box">
+            <div class="wc-title">
+                <h4>پرداخت</h4>
+            </div>
+            <div class="widget-inner">
+                <div class="row">
+                <div class="col-md-8 text-center">
+                {% if items %}
+                    <div class="col-12 pb-3" >
+                        <span class="font-weight-bold" >خلاصه سفارش</span>
+                    </div>
+                    {% for item in items %}
+                        <div class="col-12 mb-2">
+                            <p class="mb-1" >{{item.course.title}}</p>
+                            <img src="{{ item.course.image.url }}" width="100">
+                            <hr>
+                        </div>
+                    {% endfor %}
+                </div>    
+                <div class="col-md-4 text-center">
+                    <div class="col-12 mb-2">
+                        <span class="pl-3">مبلغ کل دوره ها</span>
+                    </div>
+                    <div class="col-12">
+                        <span>{{ cart.get_price|intcomma:False }} تومان</span>
+                        <hr>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <span class="pl-3">تخفیف دوره ها</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-danger" >{{ cart.get_total_courses_discount|intcomma:False }} تومان</span>
+                        <hr>
+                    </div>
+                    <div class="col-12 mb-2">
+                        <span class="pl-3">جمع</span>
+                    </div>
+                    <div class="col-12">
+                        <span>{{ cart.get_total_courses_price|intcomma:False }} تومان</span>
+                        <hr>
+                    </div>
+                    {% if cart.coupon_code %}
+
+                    <div class="col-12 mb-2">
+                        <span class="pl-3">کد تخفیف</span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-danger" >{{ cart.get_coupen_code_price|intcomma:False }} تومان</span>
+                        <hr>
+                    </div>
+                    {% endif %}
+                    <div class="col-12 mb-2 font-weight-bold">
+                        <span class="pl-3">مبلغ قابل پرداخت</span>
+                    </div>
+                    <div class="col-12 font-weight-bold">
+                        <span>{{ cart.get_total_price|intcomma:False }} تومان</span>
+                        <hr>
+                    </div>
+                    {% if not cart.coupon_code %}
+                         <div class="col-12 mb-3">
+                             <div class="justify-content-center" >
+                                <form method="post" action="{% url 'account:apply_coupon_code' %}" >
+                                        {% csrf_token %}
+                                        <div style="width: 100%;" class="text-center" >
+                                            {% render_field coupon_form.code class="form-control" placeholder="کد تخفیف" %}
+                                            <button type="submit" class="mt-2 btn btn-block bg-info" >ثبت کد تخفیف</button>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if cart.coupon_code %}
+                    <div class="col-12 mb-2">
+                        <div class=" alert alert-info font-weight-bold justify-content-center" style="font-family: iransans-medium;" >
+                            <p class="m-0 byekan ml-2" > ٪ {{ cart.coupon_code.discount }} تخفیف بابت کد تخفیف {{ cart.coupon_code.code }} </p>
+                                <form action="{% url 'account:remove_coupon_code' %}" class="mt-2" >
+                                    <button type="submit" style="background:none; border:none; padding:0; cursor: pointer;">
+                                        <i class="fa fa-close" style="color:red;font-size: 1.3rem;"></i>
+                                    </button>
+                                </form>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-12">
+                        <form action="{% url 'order:request' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-block" >پرداخت</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+                {% else %}
+                <div class="col-12 text-center">
+                    <p class="alert alert-warning text-center" style="font-family: iransans-light">سفارشی ای یافت نشد</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

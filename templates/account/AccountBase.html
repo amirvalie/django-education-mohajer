@@ -1,0 +1,60 @@
+{% load base_tags %}
+{% load render_partial %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <!-- PAGE TITLE HERE  -->
+    <title>{% block head_title %}{% endblock %} | {% site_title %}</title>
+    {% render_partial 'account_app.views.header_references' %}
+    {% block add_header_reference %}{% endblock %}
+</head>
+
+<body class="ttr-pinned-sidebar">
+<!-- header start -->
+{% include 'account/Header.html' %}
+<!-- header end -->
+
+<!-- Left sidebar menu start -->
+{% include 'account/Sidebar.html' %}
+<!-- Left sidebar menu end -->
+
+<!--Main container start -->
+<main class="ttr-wrapper">
+    <div class="container-fluid">
+        <div class="db-breadcrumb">
+            <h4 class="breadcrumb-title">حساب کاربری</h4>
+            <ul class="db-breadcrumb-list">
+                {% block page_title %}{% endblock %}
+            </ul>
+        </div>
+        {% block content %}{% endblock %}
+    </div>
+</main>
+<div class="ttr-overlay"></div>
+
+{% include 'account/_FooterReferences.html' %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if messages %}
+    {% for m in messages %}
+        {% if "success" in m.tags %}
+            <script>
+                Swal.fire({title:"ایجوکمپ",text:"{{ m }}",icon:"success",  confirmButtonText: 'باشه'})
+            </script>
+        {% elif "error" in m.tags %}
+            <script>
+                Swal.fire({title:"ایجوکمپ",text:"{{ m }}",icon:"error",  confirmButtonText: 'باشه'})
+            </script>
+        {% else %}
+            <script>
+                Swal.fire({title:"ایجوکمپ",text:"{{ m }}",icon:"info",  confirmButtonText: 'باشه'})
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% block add_footer_reference %}{% endblock %}
+
+</body>
+
+
+</html>

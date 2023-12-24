@@ -1,0 +1,241 @@
+{% extends 'Shared/Base.html' %}
+{% load humanize %}
+{% load static %}
+{% block head_title %}صفحه اصلی{% endblock %}
+{% block content %}
+    <!-- Main Slider -->
+    <div class="section-area section-sp1 ovpr-dark bg-fix online-cours"
+         style="background-image:url({% static 'images/background/bg1.jpg' %});">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 text-center text-white">
+                    <h2>دوره‌های آنلاین آموزشی</h2>
+                    <h5>آینده را با یادگرفتن مهارت‌ به کام خود کنید</h5>
+                    <form method="get" class="cours-search" action="{% url 'course:course_list' %}">
+                        <div class="input-group">
+                            <input name="search" type="text" class="form-control"
+                                   placeholder="دنبال چه دوره ای میگردی؟" required>
+                            <div class="input-group-append">
+                                <button class="btn" type="submit">جستجو</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Main Slider -->
+    <div class="content-block">
+        <!-- Last Courses -->
+        <div class="section-area section-sp2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 heading-bx left">
+                        <h2 class="title-head">آخرین <span>دوره‌ها</span></h2>
+                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
+                            است.</p>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+                        {% for course in last_courses %}
+                            <div class="col-md-6 col-lg-6 col-xl-3 col-sm-6 m-b30">
+                                <div class="cours-bx">
+                                    <div class="action-box">
+                                        <a href="{{ course.course_url }}"><img src="{{ course.image.url }}"
+                                                                               alt="{{ course.title }}"></a>
+                                        <a href="{{ course.course_url }}"
+                                           class="btn">بیشتر بخوانید</a>
+                                    </div>
+                                    <div class="info-bx text-center">
+                                        <h5><a style="font-size: 15px"
+                                               href="{{ course.course_url }}">{{ course.title|truncatechars:29 }}</a>
+                                        </h5>
+                                        <span>{{ course.category_to_str }}</span>
+                                    </div>
+                                    <div class="cours-more-info">
+                                        <div class="price">
+                                            {% if course.price == 0 %}
+                                                <h5>
+                                                    <span style="color: #018f23">رایگان !</span>
+                                                </h5>
+                                            {% elif course.discount == 100 %}
+                                                <h5>
+                                                    <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                    <span style="color: #018f23">رایگان !</span>
+                                                </h5>
+                                            {% elif course.discount < 100 %}
+                                                <h5>
+                                                    <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                    {{ course.total_price | intcomma:False }} تومان
+                                                </h5>
+                                            {% else %}
+                                                <h5> {{ course.total_price | intcomma:False }} تومان </h5>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Last Courses END -->
+
+        <div class="section-area section-sp2 bg-fix ovbl-dark join-bx text-center"
+             style="background-image:url({% static 'images/background/bg1.jpg' %});">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="join-content-bx text-white">
+                            <h2>مهارت جدیدی را <br>آنلاین بیاموزید</h2>
+                            <h4><span class="counter">{{ courses_count|intcomma:False }}</span> دوره آنلاین </h4>
+                            <p> نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو
+                                در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه
+                                راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و
+                                جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
+                            {% if request.user.is_authenticated %}
+                                <a href="{% url 'course:course_list' %}" class="btn button-md btn-block">دوره ها</a>
+                            {% else %}
+                                <a href="{% url 'account:register' %}" class="btn button-md btn-block">ثبت نام کنید</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Form END -->
+        <!-- Popular Courses -->
+        <div class="section-area section-sp2 popular-courses-bx">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 heading-bx left">
+                        <h2 class="title-head">محبوب‌ترین <span>دوره‌ها</span></h2>
+                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
+                            است.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="courses-carousel owl-carousel owl-btn-1 col-12 p-lr0">
+                        {% for course in popular_courses %}
+                            <div class="item">
+                                <div class="cours-bx">
+                                    <div class="action-box">
+                                        <a href="{{ course.course_url }}"><img src="{{ course.image.url }}"
+                                                                               alt="{{ course.title }}"></a>
+                                        <a href="{{ course.course_url }}"
+                                           class="btn">بیشتر بخوانید</a>
+                                    </div>
+                                    <div class="info-bx text-center">
+                                        <h5><a style="font-size: 15px"
+                                               href="{{ course.course_url }}">{{ course.title|truncatechars:29 }}</a>
+                                        </h5>
+                                        <span>{{ course.category_to_str }}</span>
+                                    </div>
+                                    <div class="cours-more-info">
+                                        <div class="price">
+                                            {% if course.price == 0 %}
+                                                <h5>
+                                                    <span style="color: #018f23">رایگان !</span>
+                                                </h5>
+                                            {% elif course.discount == 100 %}
+                                                <h5>
+                                                    <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                    <span style="color: #018f23">رایگان !</span>
+                                                </h5>
+                                            {% elif course.discount < 100 %}
+                                                <h5>
+                                                    <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                    {{ course.total_price | intcomma:False }} تومان
+                                                </h5>
+                                            {% else %}
+                                                <h5> {{ course.total_price | intcomma:False }} تومان </h5>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Popular Courses END -->
+        <!-- Testimonials -->
+        <div class="section-area section-sp1 bg-fix ovbl-dark text-white"
+             style="background-image:url({% static 'images/background/bg1.jpg' %});">
+            <div class="container">
+                <div class="row text-center">
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12 m-b30">
+                        <div class="counter-style-1">
+                            <div class="text-white">
+                                <span class="counter">{{ courses_count|intcomma:False }}</span><span>+</span>
+                            </div>
+                            <span class="counter-text">دوره</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12 m-b30">
+                        <div class="counter-style-1">
+                            <div class="text-white">
+                                <span class="counter">{{ students_count|intcomma:False }}</span><span>+</span>
+                            </div>
+                            <span class="counter-text">دانشجو</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4 col-12 m-b30">
+                        <div class="counter-style-1">
+                            <div class="text-white">
+                                <span class="counter">{{ teachers_count|intcomma:False }}</span><span>+</span>
+                            </div>
+                            <span class="counter-text">مدرس</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Testimonials END -->
+        <!-- RECENT BLOG ==== -->
+        <div class="section-area section-sp2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 heading-bx left">
+                        <h2 class="title-head">آخرین <span> مقالات</span></h2>
+                    </div>
+                </div>
+                <div class="ttr-blog-grid-3 row" id="masonry" style="position: relative; height: 1676.11px;">
+                    {% for blog in last_blogs %}
+                        <div class="post action-card col-lg-4 col-md-6 col-sm-12 col-xs-12 m-b40"
+                             style="position: absolute; right: 0px; top: 0px;">
+                            <div class="recent-news">
+                                <div class="action-box">
+                                    <a href="{% url 'blog:blog_detail' blog.pk blog.slug %}"><img
+                                            src="{{ blog.image.url }}" alt="{{ blog.title }}"></a>
+                                </div>
+                                <div class="info-bx">
+                                    <ul class="media-post">
+                                        <li><a><i class="fa fa-calendar"></i>{{ blog.get_jalali_date_for_url }}
+                                        </a></li>
+                                        <li><a href="#"><i class="fa fa-user"></i>{{ blog.get_author_name }}</a></li>
+                                    </ul>
+                                    <h5 class="post-title"><a
+                                            href="{% url 'blog:blog_detail' blog.pk blog.slug %}">{{ blog.title }}</a>
+                                    </h5>
+                                    <p class="text-center">{{ blog.description|striptags|safe|truncatechars:100 }}</p>
+                                    <div class="post-extra">
+                                        <a href="{% url 'blog:blog_detail' blog.pk blog.slug %}" class="btn-link">بیشتر
+                                            بخوانید</a>
+                                        <a class="comments-bx"><i
+                                                class="fa fa-comments-o"></i>{{ blog.comments.get_active_comment.count }}
+                                            دیدگاه</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- RECENT BLOG END ==== -->
+        </div>
+        <!-- contact area END -->
+{% endblock %}

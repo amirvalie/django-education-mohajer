@@ -1,0 +1,88 @@
+{% extends 'account/AccountBase.html' %}
+{% load humanize %}
+{% block head_title %}جزئیات پرداخت{% endblock %}
+{% block page_title %}
+    <li>جزئیات پرداخت</li>{% endblock %}
+{% block content %}
+    <div class="row">
+        <!-- Your Profile Views Chart -->
+        <div class="col-lg-12 m-b30">
+            <div class="widget-box">
+                <div class="wc-title">
+                    <h4>جزئیات پرداخت</h4>
+                    <div class="mail-list-info mt-3 text-center" style="padding: 20px 0;margin-bottom: -20px">
+                        <div class="col-md-3">
+                            <span>{{ object.id }} #</span>
+                        </div>
+                        <div class="col-md-3">
+                            <span>جمع کل : {% if object.get_total_price == 0 %}
+                                <span class="font-weight-bold" style="color: #018f23">رایگان</span>
+                            {% else %}
+                                <span class="font-weight-bold">{{ object.get_total_price|intcomma:False }} تومان</span>
+                            {% endif %}
+                            {% if object.coupon_code %}
+                                <span class="font-weight-bold text-danger mr-3">{{ object.coupon_code.discount }} % کد تخفیف</span>
+                            {% endif %}
+                            </span>
+                        </div>
+                        <div class="col-md-3">
+                            {% if object.status == "s" %}
+                                <span class="text-success text-center font-weight-bold">پرداخت شده</span>
+                            {% elif object.status == "f" %}
+                                <span class="text-danger text-center font-weight-bold">پرداخت ناموفق</span>
+                            {% else %}
+                                <span class="text-danger text-center font-weight-bold">در انتظار پرداخت</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <span>{{ object.jalali_time }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-inner">
+                    <div class="email-wrapper">
+                        <div class="mail-list-container">
+                            <div class="mail-box-list">
+                                {% for item in object.items.all %}
+                                    <div class="mail-list-info text-center" style="padding: 10px 0">
+                                        <div class="col-md-4">
+                                            <div class="row">
+                                                <div class="col-md-2">{{ forloop.counter }}</div>
+                                                <div class="col-md-10">
+                                                    <span>{{ item.course.title }}</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            {% if item.price == 0 %}
+                                                <span style="color:#018f23;" class="text-primary">رایگان !</span>
+                                            {% elif item.discount == 100 %}
+                                                <del style="color:#ff3f3f;font-size: 17px">{{ item.price | intcomma:False }}</del>
+                                                <span style="color:#018f23;" class="text-primary">رایگان !</span>
+                                            {% elif item.discount < 100 %}
+                                                <del style="color:#ff3f3f;font-size: 17px">{{ item.price | intcomma:False }}</del>
+                                                <span class="text-primary"> {{ item.total_price | intcomma:False }}
+                                                        تومان </span>
+                                            {% else %}
+                                                <span class="text-primary"> {{ item.total_price | intcomma:False }}
+                                                        تومان </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <a style="font-size: 14px"
+                                               href="{% url 'course:course_detail' item.course.pk item.course.slug %}"
+                                               class="badge badge-warning">لینک دوره</a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Your Profile Views Chart END-->
+    </div>
+{% endblock %}

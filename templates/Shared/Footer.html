@@ -1,0 +1,111 @@
+{% load static %}
+<footer>
+    <div class="footer-top">
+        <div class="pt-exebar">
+            <div class="container">
+                <div class="d-flex align-items-stretch">
+                    <div class="pt-logo mr-auto">
+                        <a href="{% url 'index:index_page' %}"><img src="{% static 'images/logo-white.png' %}" alt=""/></a>
+                    </div>
+                    <div class="pt-social-link">
+                        <ul class="list-inline m-a0">
+                            {% if youtube %}
+                                <li><a target="_blank" href="{{ youtube }}" class="btn-link"><i
+                                        class="fa fa-youtube-play"></i></a></li>
+                            {% endif %}
+                            {% if twitter %}
+                                <li><a target="_blank" href="https://twitter.com/{{ twitter }}" class="btn-link"><i
+                                        class="fa fa-twitter"></i></a></li>
+                            {% endif %}
+                            {% if instagram %}
+                                <li><a target="_blank" href="https://www.instagram.com/{{ instagram }}" class="btn-link"><i
+                                        class="fa fa-instagram"></i></a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="pt-btn-join">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'course:course_list' %}" class="btn ">دوره ها</a>
+                        {% else %}
+                            <a href="{% url 'account:register' %}" class="btn ">عضو شوید</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-12 col-sm-12 footer-col-4">
+                    <div class="widget">
+                        <h5 class="footer-title">جستجوی دوره ها</h5>
+                        <p class="text-capitalize m-b20">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با
+                            استفاده از طراحان گرافیک است.</p>
+                        <div class="subscribe-form m-b20">
+                            <form class="subscription-form"
+                                  action="{% url 'course:course_list' %}" method="get">
+                                <div class="ajax-message"></div>
+                                <div class="input-group">
+                                    <input name="search" required="required" class="form-control"
+                                           placeholder="دنبال چه دوره ای میگردی؟"
+                                           type="text">
+                                    <span class="input-group-btn">
+												<button type="submit" class="btn"><i
+                                                        class="fa fa-arrow-left"></i></button>
+											</span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-5 col-md-7 col-sm-12">
+                    <div class="row">
+                        <div class="col-6 col-lg-6 col-md-6 col-sm-6">
+                            <div class="widget footer_widget">
+                                <h5 class="footer-title">دسترسی سریع</h5>
+                                <ul>
+                                    <li><a href="{% url 'index:index_page' %}">خانه</a></li>
+                                    <li><a href="{% url 'course:course_list' %}">دوره‌ها</a></li>
+                                    <li><a href="{% url 'about_us:about_us' %}">درباره ما</a></li>
+                                    <li><a href="{% url 'contact:contact_create' %}">تماس با ما</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-6 col-md-6 col-sm-6">
+                            <div class="widget footer_widget">
+                                <h5 class="footer-title">دوره‌ها</h5>
+                                <ul>
+                                    {% for category in categories %}
+                                        <li>
+                                            <a href="{% url 'course:course_list' %}?categories={{ category.title }}">{{ category.title }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3 col-md-5 col-sm-12 footer-col-4">
+                    <div class="widget widget_gallery gallery-grid-4">
+                        <h5 class="footer-title">مقالات</h5>
+                        <ul class="magnific-image">
+                            {% for blog in blogs %}
+                                <li><a href="{% url 'blog:blog_detail' blog.pk blog.slug %}"
+                                       class="magnific-anchor"><img
+                                        src="{{ blog.image.url }}" alt="{{ blog.title }}"></a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 text-center"> © 1400 <span
+                        class="text-white">{{ site_title }}</span> تمامی حقوق محفوظ است
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

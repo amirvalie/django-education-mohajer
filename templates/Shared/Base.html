@@ -1,0 +1,50 @@
+{% load base_tags %}
+{% load render_partial %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <!-- PAGE TITLE HERE ============================================= -->
+    <title>{% block head_title %}{% endblock %} | {% site_title %}</title>
+    {% render_partial 'index_app.views.header_references' %}
+    {% block add_header_reference %}{% endblock %}
+</head>
+
+<body id="bg">
+<div class="page-wraper">
+    <div id="loading-icon-bx"></div>
+    <!-- Header Top ==== -->
+    {% render_partial 'index_app.views.site_header' %}
+    <!-- header END ==== -->
+    <!-- Content -->
+    <div class="page-content bg-white">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- Content END-->
+    <!-- Footer ==== -->
+    {% render_partial 'index_app.views.footer' %}
+    <!-- Footer END ==== -->
+    <button class="back-to-top fa fa-chevron-up"></button>
+</div>
+{% include 'Shared/_FooterReferences.html' %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% if messages %}
+    {% for m in messages %}
+        <script>
+        {% if "success" in m.tags %}
+            swal({title:"ایجوکمپ",text:"{{ m }}",icon:"success",  confirmButtonText: 'باشه'
+            })
+        {% elif "error" in m.tags %}
+            swal({title:"ایجوکمپ",text:"{{ m }}",icon:"error",  confirmButtonText: 'باشه'
+            })
+        {% else %}
+            swal({title:"ایجوکمپ",text:"{{ m }}",icon:"info",  confirmButtonText: 'باشه'
+            })
+        {% endif %}
+        </script>
+    {% endfor %}
+{% endif %} 
+{% block add_footer_reference %}{% endblock %}
+</body>
+
+
+</html>

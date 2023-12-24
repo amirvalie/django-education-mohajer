@@ -1,0 +1,62 @@
+{% load humanize %}
+{% load static %}
+<div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+    <div class="widget courses-search-bx placeani">
+        <div class="form-group">
+            <div class="input-group">
+                <label>جستجو دوره‌ها</label>
+                <form method="get" action="{% url 'course:course_list' %}">
+                    <div class="row">
+                        <div class="col-8"><input name="search" type="text" required class="form-control"></div>
+                        <div class="col-2">
+                            <button class="btn mt-1 p-2" type="submit" value="جستجو">جستجو</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="widget widget_archive">
+        <h5 class="widget-title style-1"><a href="{% url 'course:course_list' %}">همه‌ی دوره‌ها</a></h5>
+        <ul>
+            {% for category in categories %}
+                <li><a href="{{ category.category_url }}">{{ category.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="widget">
+        <a href="#"><img src="{% static 'images/adv/adv222.png' %}" alt=""/></a>
+    </div>
+    <div class="widget recent-posts-entry widget-courses">
+        <h5 class="widget-title style-1"> دوره‌های اخیر</h5>
+        <div class="widget-post-bx">
+            {% for course in courses %}
+                <div class="widget-post clearfix">
+                    <div class="ttr-post-media">
+                        <a href="{{ course.course_url }}"><img src="{{ course.image.url }}" width="200" height="143"
+                                                               alt="{{ course.title }}"></a>
+                    </div>
+                    <div class="ttr-post-info">
+                        <div class="ttr-post-header">
+                            <h6 class="post-title"><a href="{{ course.course_url }}">{{ course.title }}</a></h6>
+                        </div>
+                        <div class="ttr-post-meta">
+                            <ul>
+                                <li class="price">
+                                    {% if course.total_price == 0 %}
+                                        <h5>
+                                            <span style="color: #018f23">رایگان !</span>
+                                        </h5>
+                                    {% else %}
+                                        <h5> {{ course.total_price | intcomma:False }} تومان </h5>
+                                    {% endif %}
+                                </li>
+                                <li class="review">{{ course.comments.get_active_comment.count }} دیدگاه</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

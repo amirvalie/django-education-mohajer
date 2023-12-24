@@ -1,0 +1,195 @@
+{% extends 'Shared/Base.html' %}
+{% load render_partial %}
+{% load widget_tweaks %}
+{% load static %}
+{% block head_title %}مقاله {{ object.title }}{% endblock %}
+{% block content %}
+    <!-- inner page banner -->
+    <div class="page-banner ovbl-dark" style="background-image:url({{ object.image.url }});">
+        <div class="container">
+            <div class="page-banner-entry">
+                <h1 class="text-white">مقاله {{ object.title }}</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="{% url 'index:index_page' %}">خانه</a></li>
+                <li><a href="{% url 'blog:blog_list' %}">مقالات</a></li>
+                <li><a href="{% url 'blog:blog_detail' object.pk object.slug %}">{{ object.title }}</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb row END -->
+    <div class="content-block">
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    <!-- Left part start -->
+                    <div class="col-lg-8 col-xl-8">
+                        <!-- blog start -->
+                        <div class="recent-news blog-lg">
+                            <div class="action-box blog-lg">
+                                <img src="{{ object.image.url }}" alt="{{ object.title }}">
+                            </div>
+                            <div class="info-bx">
+                                <ul class="media-post">
+                                    <li><a><i class="fa fa-user"></i>{{ object.get_author_name }}
+                                    </a></li>
+                                    <li><a><i class="fa fa-calendar"></i>{{ object.get_jalali_date_for_url }}
+                                    </a></li>
+                                    <li><a><i
+                                            class="fa fa-comments-o"></i>{{ object.comments.get_active_comment.count }}
+                                        دیدگاه</a></li>
+                                    <li><a><i
+                                            class="fa fa-eye"></i>{{ object.hits.all.count }} بازدید</a></li>
+                                </ul>
+                                <h5 class="post-title"><a href="#">{{ object.title }}</a></h5>
+                                {{ object.description|safe }}
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                                <div class="widget_tag_cloud">
+                                    <h6>برچسب ها</h6>
+                                    <div class="tagcloud">
+                                        {% for tag in object.tags.get_active_tag %}
+                                            <a href="{% url 'blog:blog_list' %}?search={{ tag.title }}">{{ tag.title }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                                <h6>اشتراک</h6>
+                                <ul class="list-inline contact-social-bx">
+                                    <li><a target="_blank" href="whatsapp://send?text=http://127.0.0.1:8000{% url 'blog:blog_detail' object.pk object.slug %}" class="btn outline radius-xl"><i class="fa fa-whatsapp"></i></a>
+                                    </li>
+                                    <li><a target="_blank" href="https://twitter.com/share?url=http://127.0.0.1:8000{% url 'blog:blog_detail' object.pk object.slug %}" class="btn outline radius-xl"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a target="_blank" href="https://t.me/share/url?url=http://127.0.0.1:8000{% url 'blog:blog_detail' object.pk object.slug %}" class="btn outline radius-xl"><i class="fa fa-telegram"></i></a>
+                                    </li>
+                                    <li><a target="_blank" href="http://www.facebook.com/sharer.php?u=http://127.0.0.1:8000{% url 'blog:blog_detail' object.pk object.slug %}" class="btn outline radius-xl"><i class="fa fa-facebook"></i></a>
+                                    </li>
+                                    <li><a target="_blank" href="mailto:?subject={{ object.title }}&body=http://127.0.0.1:8000{% url 'blog:blog_detail' object.pk object.slug %}" class="btn outline radius-xl"><i class="fa fa-envelope"></i></a>
+                                    </li>
+                                </ul>
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                            </div>
+                        </div>
+                        <div class="clear" id="comment-list">
+                            <div class="comments-area" id="comments">
+                                <div class="clearfix m-b20">
+                                    <!-- Form -->
+                                    <div class="comment-respond mb-3" id="respond">
+                                        <h4 class="comment-reply-title" id="reply-title">دیدگاه خود را بنویسید<small>
+                                        </small></h4>
+                                        <div id="review">
+                                            {% if user.is_authenticated %}
+                                                <form class="comment-form" id="commentform" method="post">
+                                                    {% csrf_token %}
+                                                    {{ form.recaptcha }} 
+                                                    <p class="comment-form-comment">
+                                                        <label for="comment">دیدگاه</label>
+                                                        {% render_field form.message rows="8" placeholder="دیدگاه" id="comment" %}
+                                                    </p>
+                                                    <input type="hidden" value id="parent_id" name="parent_id" >
+                                                    <p class="form-submit">
+                                                        <input type="submit" value="ثبت دیدگاه" class="submit"
+                                                               id="submit"
+                                                               name="submit">
+                                                    </p>
+                                                </form>
+                                            {% else %}
+                                                <p class="alert alert-warning text-center">برای ثبت دیدگاه باید <a
+                                                        href="{% url 'account:login' %}?next={{ request.get_full_path }}">وارد</a>
+                                                    شوید.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if form.message.errors %}
+                                            {% for error in form.message.errors %}
+                                                <div class="col-12 mt-3" >
+                                                    <p class="alert alert-danger text-center">
+                                                        {{ error }}
+                                                    </p>    
+                                                </div>
+                                            {% endfor %}
+                                    {% endif %}
+                                    {% if object.comments.get_active_comment %}
+                                        <h2 class="comments-title">{{ object.comments.get_active_comment.count }}
+                                            دیدگاه</h2>
+                                    {% else %}
+                                        <div class="col-lg-12">
+                                            <p class="alert alert-success text-center">شما اولین دیدگاه را ثبت کنید</p>
+                                        </div>
+                                    {% endif %}
+                                    <!-- Form -->
+                                    <!-- comment list END -->
+                                    {% if object.comments.get_active_comment %}
+                                        <ol class="comment-list">
+                                            <li class="comment">
+                                                {% for comment in object.comments.get_active_comment %}
+                                                    <div class="comment-body {% if comment.user == object.teacher %}teacher-comment{% endif %}">
+                                                        <div class="comment-author vcard"><img class="avatar photo"
+                                                                                            src="{{ comment.user.profile.get_avatar }}"
+                                                                                            alt="{{ comment.get_user_name }}">
+                                                            <cite
+                                                                    class="fn">{{ comment.get_user_name }}</cite>
+                                                            <span class="says">نوشته:</span></div>
+                                                        <div class="comment-meta"><a>{{ comment.jalali_time }}</a>
+                                                        </div>
+                                                        <p class="text-justify">{{ comment.message }}</p>
+                                                        <div class="reply"><a href="#comments" onclick="updateParentInput({{comment.id}})">پاسخ</a>
+                                                        </div>
+                                                        <div class="replies mt-3">
+                                                            {% for reply in comment.replies.get_active_reply %}
+                                                                <ol class="children">
+                                                                    <li class="comment odd parent">
+                                                                        <div class="comment-body {% if reply.user == object.teacher %}teacher-comment{% endif %}">
+                                                                            <div class="comment-author vcard"><img
+                                                                                    class="avatar photo"
+                                                                                    src="{{ reply.user.profile.get_avatar }}"
+                                                                                    alt="{{ reply.get_user_name }}"> <cite
+                                                                                    class="fn">{{ reply.get_user_name }}</cite>
+                                                                                <span class="says">نوشته:</span></div>
+                                                                            <div class="comment-meta">
+                                                                                <a>{{ reply.jalali_time }}</a>
+                                                                            </div>
+                                                                            <p class="text-justify pl-2">{{ reply.message }}</p>
+                                                                        </div>
+                                                                        <!-- list END -->
+                                                                    </li>
+                                                                </ol>
+                                                            {% endfor %}
+                                                        </div>
+
+
+                                                    </div>
+                                                {% endfor %}
+
+                                                <!-- list END -->
+                                            </li>
+                                        </ol>
+                                    {% endif %}
+                                    <!-- comment list END -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- blog END -->
+                    </div>
+                    <!-- Left part END -->
+                    <!-- Side bar start -->
+                    {% render_partial 'blog_app.views.sidebar_blog' %}
+                    <!-- Side bar END -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block add_footer_reference %}
+    <script>
+    function updateParentInput(num){
+        document.getElementById("parent_id").value = num;
+        $("#reply-title").text("پاسخ خود را بنویسید");
+    }
+    </script>
+{% endblock %}
+

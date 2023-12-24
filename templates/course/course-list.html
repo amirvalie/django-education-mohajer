@@ -1,0 +1,145 @@
+{% extends 'Shared/Base.html' %}
+{% load render_partial %}
+{% load humanize %}
+{% load static %}
+{% block head_title %}دوره های آموزشی
+    {% if request.GET.categories %}{{ request.GET.categories }}{% elif request.GET.search %}جستجوی
+        {{ request.GET.search }}
+    {% endif %}{% endblock %}
+{% block content %}
+    <!-- inner page banner -->
+    <div class="page-banner ovbl-dark" style="background-image:url({% static "images/banner/banner3.jpg" %});">
+        <div class="container">
+            <div class="page-banner-entry">
+                <h1 class="text-white">{% if request.GET.categories %}دوره‌های آموزشی |
+                    {{ request.GET.categories }}{% elif request.GET.search %}دوره‌های آموزشی | جستجوی
+                    {{ request.GET.search }}{% else %}
+                    دوره های آموزشی{% endif %}</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="/">خانه</a></li>
+                <li><a href="{% url 'course:course_list' %}"> دوره های آموزشی</a></li>
+                {% if request.GET.categories %}
+                    <li>
+                        <a href="{% url 'course:course_list' %}?categories={{ request.GET.categories }}"> {{ request.GET.categories }}</a>
+                    </li>
+                {% elif request.GET.search %}
+                    <li>
+                        <a>جستجوی {{ request.GET.search }}</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb row END -->
+    <!-- inner page banner END -->
+    <div class="content-block">
+        <!-- About Us -->
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    {% render_partial 'course_app.views.sidebar_course_list' %}
+                    <div class="col-lg-9 col-md-8 col-sm-12">
+                        <div class="row">
+                            {% if page_obj %}
+                                {% for course in page_obj %}
+                                    <div class="col-md-6 col-lg-4 col-sm-6 m-b30">
+                                        <div class="cours-bx">
+                                            <div class="action-box">
+                                                <a href="{{ course.course_url }}"><img src="{{ course.image.url }}"
+                                                                                       alt="{{ course.title }}"></a>
+                                                <a href="{{ course.course_url }}"
+                                                   class="btn">بیشتر بخوانید</a>
+                                            </div>
+                                            <div class="info-bx text-center">
+                                                <h5><a style="font-size: 15px"
+                                                       href="{{ course.course_url }}">{{ course.title|truncatechars:29 }}</a>
+                                                </h5>
+                                                <span>{{ course.category_to_str }}</span>
+                                            </div>
+                                            <div class="cours-more-info">
+                                                <div class="price">
+                                                    {% if course.price == 0 %}
+                                                        <h5>
+                                                            <span style="color: #018f23">رایگان !</span>
+                                                        </h5>
+                                                    {% elif course.discount == 100 %}
+                                                        <h5>
+                                                            <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                            <span style="color: #018f23">رایگان !</span>
+                                                        </h5>
+                                                    {% elif course.discount < 100 %}
+                                                        <h5>
+                                                            <del style="color:#ff3f3f;">{{ course.price | intcomma:False }}</del>
+                                                            {{ course.total_price | intcomma:False }} تومان
+                                                        </h5>
+                                                    {% else %}
+                                                        <h5> {{ course.total_price | intcomma:False }} تومان </h5>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if page_obj.paginator.num_pages != 1 %}
+                                    <div class="col-lg-12 m-b20">
+                                        <div class="pagination-bx rounded-sm gray clearfix">
+                                            <ul class="pagination">
+                                                {% if page_obj.has_previous %}
+                                                    <li class="previous"><a
+                                                            href="?page={{ page_obj.previous_page_number }}"><i
+                                                            class="ti-arrow-right"></i> قبلی</a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if page_obj.number|add:-2 <= page_obj.paginator.num_pages and page_obj.number|add:-2 >= 1 %}
+                                                    <li>
+                                                        <a href="?page={{ page_obj.number|add:-2 }}">{{ page_obj.number|add:-2 }}</a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if page_obj.has_previous %}
+                                                    <li>
+                                                        <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                                                    </li>
+                                                {% endif %}
+                                                <li class="active"><a
+                                                        href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                                                </li>
+                                                {% if page_obj.has_next %}
+                                                    <li>
+                                                        <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if page_obj.number|add:2 <= page_obj.paginator.num_pages %}
+                                                    <li>
+                                                        <a href="?page={{ page_obj.number|add:2 }}">{{ page_obj.number|add:2 }}</a>
+                                                    </li>
+                                                {% endif %}
+                                                {% if page_obj.has_next %}
+                                                    <li class="next"><a href="?page={{ page_obj.next_page_number }}">بعدی<i
+                                                            class="ti-arrow-left"></i></a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <div class="col-lg-12">
+                                    <p class="alert alert-warning text-center">دوره ای یافت نشد</p>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- contact area END -->
+
+{% endblock %}

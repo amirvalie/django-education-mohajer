@@ -1,0 +1,50 @@
+{% load widget_tweaks %}
+<div class="col-lg-4 sticky-top">
+    <aside class="side-bar sticky-top">
+        <div class="widget">
+            <h6 class="widget-title">جستجو</h6>
+            <div class="search-bx style-1">
+                <form role="search" method="get" action="{% url 'blog:blog_list' %}">
+                    <div class="input-group">
+                        <input name="search" class="form-control" placeholder="جستجو کنید"
+                               type="text">
+                        <span class="input-group-btn"><button type="submit" class="fa fa-search text-primary"></button></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="widget recent-posts-entry">
+            <h6 class="widget-title">آخرین مقالات</h6>
+            <div class="widget-post-bx">
+                {% for blog in blogs %}
+                    <div class="widget-post clearfix">
+                        <div class="ttr-post-media"><a href="{% url 'blog:blog_detail' blog.pk blog.slug %}"><img
+                                src="{{ blog.image.url }}"
+                                width="200" height="143" alt="{{ blog.title }}"></a></div>
+                        <div class="ttr-post-info">
+                            <div class="ttr-post-header">
+                                <h6 class="post-title"><a
+                                        href="{% url 'blog:blog_detail' blog.pk blog.slug %}">{{ blog.title }}</a></h6>
+                            </div>
+                            <ul class="media-post">
+                                <li><a href="#"><i class="fa fa-calendar"></i>{{ blog.get_jalali_date_for_url }}</a>
+                                </li>
+                                <li><a href="#"><i
+                                        class="fa fa-comments-o"></i>{{ blog.comments.get_active_comment.count }} دیدگاه</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="widget widget_tag_cloud">
+            <h6 class="widget-title">آخرین برچسب ها</h6>
+            <div class="tagcloud">
+                {% for tag in tags %}
+                    <a href="{% url 'blog:blog_list' %}?search={{ tag.title }}">{{ tag.title }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </aside>
+</div>
