@@ -219,14 +219,13 @@ AZ_IRANIAN_BANK_GATEWAYS = {
     "SETTING_VALUE_READER_CLASS": "azbankgateways.readers.DefaultReader",  # اختیاری
     "BANK_PRIORITIES": [],
 }
-
 # email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "djangoeducationmohajer@gmail.com"
-EMAIL_HOST_PASSWORD = "atyr gqot uybg vpns"
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 # recaptcha
 RECAPTCHA_PUBLIC_KEY = config("RECAPTCHA_PUBLIC_KEY")
