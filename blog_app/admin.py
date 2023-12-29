@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Blog, BlogTag, Comment
+from .models import Blog, BlogTag
 from django.contrib.auth import get_user_model
 
 # Register your models here.
@@ -25,14 +25,5 @@ class BlogTagAdmin(admin.ModelAdmin):
     class meta:
         model = BlogTag
 
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ['get_user_name','blog','get_message','get_parent_user','jalali_time','active']
-    list_filter = ['active','created']
-    search_fields = ['user__username','user__first_name','user__last_name','parent__message','parent__user__username','parent__user__first_name','parent__user__last_name','message']
-
-    class meta:
-        model = Comment
-
 admin.site.register(Blog,BlogAdmin)
 admin.site.register(BlogTag,BlogTagAdmin)
-admin.site.register(Comment,CommentAdmin)

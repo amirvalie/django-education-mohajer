@@ -42,8 +42,6 @@ class CourseFieldMixin():
                 'level',
                 'language',
             ]
-
-
         else:
             raise Http404('این صفحه برای شما در دسترس نیست')
 

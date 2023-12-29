@@ -1,0 +1,98 @@
+{% load static %}
+{% load comment_tags %}
+<div class="clear" id="comment-list">
+    <div class="comments-area" id="comments">
+        <div class="clearfix m-b20">
+            <!-- Form -->
+            <div class="comment-respond mb-3" id="respond">
+                <h4 class="comment-reply-title" id="reply-title">دیدگاه خود را بنویسید<small>
+                </small></h4>
+                <div id="review">
+                    {% if request.user.is_authenticated %}
+                        {% comment_form as comment_form %}
+                        <form class="comment-form" id="commentform" method="post" action="{% comment_target object %}">
+                            {% csrf_token %}
+                            <p class="comment-form-comment">
+                                <label for="comment">دیدگاه</label>
+                                {{ comment_form.message }}
+                            </p>
+                            <input type="hidden" value id="parent_id" name="parent_id" >
+                            <p class="form-submit">
+                                <input type="submit" value="ثبت دیدگاه" class="submit"
+                                       id="submit"
+                                       name="submit">
+                            </p>
+                        </form>
+                    {% else %}
+                        <p class="alert alert-warning text-center"> برای ثبت دیدگاه باید <a
+                                href="{% url 'account:login' %}?next={{ request.get_full_path }}">وارد</a>
+                            شوید.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% if form.message.errors %}
+                    {% for error in form.message.errors %}
+                        <div class="col-12 mt-3" >
+                            <p class="alert alert-danger text-center">
+                                {{ error }}
+                            </p>
+                        </div>
+                    {% endfor %}
+            {% endif %}
+            {% if object.comments.get_active_comment %}
+                <h2 class="comments-title">{{ object.comments.get_active_comment.count }}
+                    دیدگاه</h2>
+            {% else %}
+                <div class="col-lg-12">
+                    <p class="alert alert-success text-center">شما اولین دیدگاه را ثبت کنید</p>
+                </div>
+            {% endif %}
+            <!-- Form -->
+            <!-- comment list END -->
+            {% if object.comments.get_active_comment %}
+                <ol class="comment-list">
+                    <li class="comment">
+                        {% for comment in object.comments.get_active_comment %}
+                            <div class="comment-body {% if comment.user == object.teacher %}teacher-comment{% endif %}">
+                                <div class="comment-author vcard"><img class="avatar photo"
+                                                                    src="{{ comment.user.profile.get_avatar }}"
+                                                                    alt="{{ comment.get_user_name }}">
+                                    <cite
+                                            class="fn">{{ comment.get_user_name }}</cite>
+                                    <span class="says">نوشته:</span></div>
+                                <div class="comment-meta"><a>{{ comment.jalali_time }}</a>
+                                </div>
+                                <p class="text-justify">{{ comment.message }}</p>
+                                <div class="reply"><a href="#comments" onclick="updateParentInput({{comment.id}})">پاسخ</a>
+                                </div>
+                                <div class="replies mt-3">
+                                    {% for reply in comment.replies.get_active_reply %}
+                                        <ol class="children">
+                                            <li class="comment odd parent">
+                                                <div class="comment-body {% if reply.user == object.teacher %}teacher-comment{% endif %}">
+                                                    <div class="comment-author vcard"><img
+                                                            class="avatar photo"
+                                                            src="{{ reply.user.profile.get_avatar }}"
+                                                            alt="{{ reply.get_user_name }}"> <cite
+                                                            class="fn">{{ reply.get_user_name }}</cite>
+                                                        <span class="says">نوشته:</span></div>
+                                                    <div class="comment-meta">
+                                                        <a>{{ reply.jalali_time }}</a>
+                                                    </div>
+                                                    <p class="text-justify pl-2">{{ reply.message }}</p>
+                                                </div>
+                                                <!-- list END -->
+                                            </li>
+                                        </ol>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <!-- list END -->
+                    </li>
+                </ol>
+            {% endif %}
+            <!-- comment list END -->
+        </div>
+    </div>
+</div>

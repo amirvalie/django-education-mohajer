@@ -14,3 +14,6 @@ def site_title():
         site_title = 'عنوان سایت'
 
     return site_title
+
+
+

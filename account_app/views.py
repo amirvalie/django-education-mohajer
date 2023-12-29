@@ -1,22 +1,24 @@
 from django.shortcuts import render, redirect, resolve_url, get_object_or_404
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView, PasswordChangeView,PasswordResetView,PasswordResetConfirmView
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.views.generic.edit import UpdateView
-from .forms import LoginForm, CreateUserForm, ProfileUpdateForm, ResetForm,VideoCreate,UserUpdateForm,CoupenCodeForm
+from .forms import LoginForm, CreateUserForm, ProfileUpdateForm, ResetForm, VideoCreate, UserUpdateForm, CoupenCodeForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from order_app.models import Order, OrderItem,CouponCode
-from course_app.models import Course,Video
+from order_app.models import Order, OrderItem, CouponCode
+from course_app.models import Course, Video
 from django.http import Http404, HttpResponseRedirect
-from django.views.generic import CreateView, ListView, DetailView ,TemplateView
+from django.views.generic import CreateView, ListView, DetailView, TemplateView
 from .models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .mixins import (TeacherMixin, CourseValidMixin, CourseFieldMixin, BlogCreateFieldMixin, BlogCreateValidMixin,TeacherBlogUpadteMixin,TeacherCourseUpadteMixin,VideoUpdateMixin)
+from .mixins import (TeacherMixin, CourseValidMixin, CourseFieldMixin, BlogCreateFieldMixin, BlogCreateValidMixin,
+                     TeacherBlogUpadteMixin, TeacherCourseUpadteMixin, VideoUpdateMixin)
 from blog_app.models import Blog
 from django.contrib import messages
-from cart_app.models import Cart,CartItem
+from cart_app.models import Cart, CartItem
 from django.utils import timezone
 from settings_app.models import Settings
+
 
 # register view
 class Register(CreateView):
@@ -26,7 +28,7 @@ class Register(CreateView):
     template_name = 'registration/register.html'
 
     def form_valid(self, form):
-        messages.success(self.request,'ثبت نام با موفقیت انجام شد. وارد شوید')
+        messages.success(self.request, 'ثبت نام با موفقیت انجام شد. وارد شوید')
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -75,8 +77,8 @@ def logout_view(request):
 class PasswordChange(PasswordChangeView):
     success_url = reverse_lazy('account:profile')
 
-    def form_valid(self,form):
-        messages.success(self.request,'رمز عبور شما با موفقیت تغییر کرد')
+    def form_valid(self, form):
+        messages.success(self.request, 'رمز عبور شما با موفقیت تغییر کرد')
         return super().form_valid(form)
 
 
@@ -86,7 +88,7 @@ class PasswordReset(PasswordResetView):
     form_class = ResetForm
 
     def form_valid(self, form):
-        messages.success(self.request,'لینک بازیابی رمز عبور به ایمیل شما ارسال شد')
+        messages.success(self.request, 'لینک بازیابی رمز عبور به ایمیل شما ارسال شد')
         return super().form_valid(form)
 
     def dispatch(self, request, *args, **kwargs):
@@ -101,9 +103,9 @@ class PasswordResetConfirm(PasswordResetConfirmView):
     success_url = reverse_lazy('account:login')
 
     def form_valid(self, form):
-        messages.success(self.request,'بازیابی رمز عبور با موفقیت انجام شد. وارد شوید')
+        messages.success(self.request, 'بازیابی رمز عبور با موفقیت انجام شد. وارد شوید')
         return super().form_valid(form)
-    
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect('/')
@@ -135,8 +137,9 @@ def add_course_to_cart(request, pk, *args, **kwargs):
             discount = course.discount
         else:
             discount = None
-        cart.items.create(course_id=course_id,price=course.price,discount=discount)
+        cart.items.create(course_id=course_id, price=course.price, discount=discount)
     return redirect('account:cart')
+
 
 # delete course from order view
 @login_required()
@@ -150,33 +153,33 @@ def delete_course_from_cart(request, pk, *args, **kwargs):
     raise Http404()
 
 
-class ProfileUpdate(LoginRequiredMixin,TemplateView):
+class ProfileUpdate(LoginRequiredMixin, TemplateView):
     user_form = UserUpdateForm
     profile_form = ProfileUpdateForm
     template_name = 'account/profile.html'
 
-    def post(self,request):
+    def post(self, request):
         post_data = request.POST or None
-        file_data = request.FILES or None       
+        file_data = request.FILES or None
 
-        user_form = UserUpdateForm(post_data,instance=request.user)
-        profile_form = ProfileUpdateForm(post_data,file_data,instance=request.user.profile)
+        user_form = UserUpdateForm(post_data, instance=request.user)
+        profile_form = ProfileUpdateForm(post_data, file_data, instance=request.user.profile)
 
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request,'عملیات با موفقیت انجام شد')
+            messages.success(request, 'عملیات با موفقیت انجام شد')
             return HttpResponseRedirect(reverse_lazy('account:profile'))
-      
+
         context = {
-            'user_form' : user_form,
-            'profile_form' : profile_form,
+            'user_form': user_form,
+            'profile_form': profile_form,
         }
 
-        return render(request,'account/profile.html',context)
+        return render(request, 'account/profile.html', context)
 
-    def get(self,request,*args, **kwargs):
-        return self.post(request,*args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 # cart view
@@ -196,6 +199,7 @@ class CartView(LoginRequiredMixin, ListView):
         context['cart'] = cart
         return context
 
+
 # apply coupon code
 @login_required()
 def apply_coupon_code(request):
@@ -205,15 +209,16 @@ def apply_coupon_code(request):
             time = timezone.now()
             code = form.cleaned_data['code']
             try:
-                coupon = CouponCode.objects.get(code__exact=code,start__lte=time,end__gte=time,status=True)
+                coupon = CouponCode.objects.get(code__exact=code, start__lte=time, end__gte=time, status=True)
                 cart = Cart.objects.get(user=request.user)
                 cart.coupon_code = coupon
                 cart.save()
-                messages.success(request,'کد تخفیف با موفقیت اعمال شد.')
+                messages.success(request, 'کد تخفیف با موفقیت اعمال شد.')
                 return redirect('account:checkout')
             except CouponCode.DoesNotExist:
-                messages.error(request,'کد تخفیف نامعتبر است.')
+                messages.error(request, 'کد تخفیف نامعتبر است.')
     return redirect('account:checkout')
+
 
 # remove coupon code from cart
 @login_required()
@@ -223,11 +228,12 @@ def remove_coupon_code(request):
         print(cart.coupon_code)
         cart.coupon_code = None
         cart.save()
-        messages.success(request,'کد تخفیف با موفقیت حذف شد')
+        messages.success(request, 'کد تخفیف با موفقیت حذف شد')
         return redirect('account:checkout')
     else:
         raise Http404()
-        
+
+
 # checkout view
 @login_required()
 def checkout(request):
@@ -236,24 +242,26 @@ def checkout(request):
 
     if cart.coupon_code:
         time = timezone.now()
-        try :
-            coupon = CouponCode.objects.get(code__exact=cart.coupon_code.code,start__lte=time,end__gte=time,status=True)
+        try:
+            coupon = CouponCode.objects.get(code__exact=cart.coupon_code.code, start__lte=time, end__gte=time,
+                                            status=True)
         except:
             cart.coupon_code = None
             cart.save()
-            messages.error(request,'کد تخفیف منقضی شده است.')
+            messages.error(request, 'کد تخفیف منقضی شده است.')
 
     items = cart.items.all()
     if items.count() < 1:
         raise Http404()
-        
+
     coupon_form = CoupenCodeForm(request.POST)
     context = {
-        'cart':cart,    
-        'items':items,
-        'coupon_form':coupon_form,    
+        'cart': cart,
+        'items': items,
+        'coupon_form': coupon_form,
     }
-    return render(request,'account/checkout.html',context)
+    return render(request, 'account/checkout.html', context)
+
 
 # my courses view
 class MyCourses(LoginRequiredMixin, ListView):
@@ -271,21 +279,21 @@ class CourseAdd(LoginRequiredMixin, CourseValidMixin, CourseFieldMixin, TeacherM
     template_name = 'account/course-add.html'
     success_url = reverse_lazy('account:teacher_courses')
 
-    def form_valid(self,form):
-        messages.success(self.request,'درخواست شما با موفقیت ثبت شد')
+    def form_valid(self, form):
+        messages.success(self.request, 'درخواست شما با موفقیت ثبت شد')
         return super().form_valid(form)
-    
+
 
 # update course view    
-class CourseUpdate(LoginRequiredMixin,TeacherMixin,TeacherCourseUpadteMixin,CourseFieldMixin,UpdateView):
+class CourseUpdate(LoginRequiredMixin, TeacherMixin, TeacherCourseUpadteMixin, CourseFieldMixin, UpdateView):
     model = Course
     template_name = 'account/course-update.html'
     success_url = reverse_lazy('account:teacher_courses')
 
 
 # teacher videos view
-class VideoList(LoginRequiredMixin,TeacherMixin,ListView):
-    
+class VideoList(LoginRequiredMixin, TeacherMixin, ListView):
+
     def get_queryset(self):
         user = self.request.user
         videos = Video.objects.filter(course__teacher=user)
@@ -295,14 +303,14 @@ class VideoList(LoginRequiredMixin,TeacherMixin,ListView):
 
 
 # add video view
-class VideoAdd(LoginRequiredMixin,TeacherMixin,CreateView):
+class VideoAdd(LoginRequiredMixin, TeacherMixin, CreateView):
     model = Video
     form_class = VideoCreate
     template_name = 'account/video-add.html'
     success_url = reverse_lazy('account:teacher_courses')
 
-    def form_valid(self,form):
-        messages.success(self.request,'درخواست شما با موفقیت ثبت شد')
+    def form_valid(self, form):
+        messages.success(self.request, 'درخواست شما با موفقیت ثبت شد')
         return super().form_valid(form)
 
     def get_form_kwargs(self):
@@ -313,14 +321,14 @@ class VideoAdd(LoginRequiredMixin,TeacherMixin,CreateView):
         return kwargs
 
 
-class VideoUpdate(LoginRequiredMixin,TeacherMixin,VideoUpdateMixin,UpdateView):
+class VideoUpdate(LoginRequiredMixin, TeacherMixin, VideoUpdateMixin, UpdateView):
     model = Video
     form_class = VideoCreate
     template_name = 'account/video-update.html'
     success_url = reverse_lazy('account:teacher_videos')
 
-    def form_valid(self,form):
-        messages.success(self.request,'درخواست شما با موفقیت ثبت شد')
+    def form_valid(self, form):
+        messages.success(self.request, 'درخواست شما با موفقیت ثبت شد')
         return super().form_valid(form)
 
     def get_form_kwargs(self):
@@ -328,10 +336,11 @@ class VideoUpdate(LoginRequiredMixin,TeacherMixin,VideoUpdateMixin,UpdateView):
         kwargs.update({
             'user': self.request.user
         })
-        return kwargs    
+        return kwargs
+
+    # teacher courses course view
 
 
-# teacher courses course view
 class TeacherCourses(LoginRequiredMixin, TeacherMixin, ListView):
     def get_queryset(self):
         user = self.request.user
@@ -368,13 +377,13 @@ class BlogCreate(LoginRequiredMixin, TeacherMixin, BlogCreateFieldMixin, BlogCre
     success_url = reverse_lazy('account:teacher_blogs')
     template_name = 'account/blog-create.html'
 
-    def form_valid(self,form):
-        messages.success(self.request,'درخواست شما با موفقیت ثبت شد')
+    def form_valid(self, form):
+        messages.success(self.request, 'درخواست شما با موفقیت ثبت شد')
         return super().form_valid(form)
-    
+
 
 # update blog view    
-class BlogUpdate(LoginRequiredMixin,TeacherMixin,TeacherBlogUpadteMixin,BlogCreateFieldMixin,UpdateView):
+class BlogUpdate(LoginRequiredMixin, TeacherMixin, TeacherBlogUpadteMixin, BlogCreateFieldMixin, UpdateView):
     model = Blog
     template_name = 'account/blog-update.html'
     success_url = reverse_lazy('account:teacher_blogs')
@@ -408,7 +417,7 @@ def header_references(request):
         icon = settings.site_favicon.url
     except:
         icon = ""
-        
+
     context = {
         'icon': icon,
     }

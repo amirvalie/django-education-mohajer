@@ -23,24 +23,3 @@ class ContactCreate(CreateView):
     def form_invalid(self, form):
         messages.error(self.request, 'عملیات ناموفق بود', extra_tags='error')
         return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        try:
-            setting = Settings.objects.first()
-            context["address"] = setting.address
-            context["phone_number"] = setting.phone_number
-            context["email"] = setting.email
-            context["instagram"] = setting.instagram
-            context["twitter"] = setting.twitter
-            context["youtube"] = setting.youtube
-        except:
-            context["address"] = ""
-            context["phone_number"] = ""
-            context["email"] = ""
-            context["instagram"] = ""
-            context["twitter"] = ""
-            context["youtube"] = ""
-        
-        return context

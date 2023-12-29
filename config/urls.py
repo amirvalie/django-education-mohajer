@@ -34,6 +34,7 @@ urlpatterns = [
     path('editor/uploads/', login_required(upload), name='ckeditor_upload'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls),
+    path('', include('comment_app.urls')),
 ]
 
 handler404 = 'config.views.view_404'
