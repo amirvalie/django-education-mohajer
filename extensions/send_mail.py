@@ -25,7 +25,9 @@ class SendMail:
 
     def send_mail_to_creator(self) -> None:
         subject = f"برای {self.title} دیدگاه جدیدی ثبت شد"
-        message = f"برای {self.title} شما دیدگاه جدیدی توسط {self.title} ثبت شده است.\n"
+        message = (
+            f"برای {self.title} شما دیدگاه جدیدی توسط {self.user_email} ثبت شده است.\n"
+        )
         EmailService.send_email(
             subject,
             [self.creator_email],
@@ -33,7 +35,7 @@ class SendMail:
             {
                 "head_title": subject,
                 "message": message,
-                "course_url": self.url,
+                "blog_url": self.url,
                 "course_title": self.title,
             },
         )

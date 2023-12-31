@@ -16,7 +16,7 @@
                 <div class="card-courses-list admin-review">
                     <div class="card-courses-full-dec">
                         <div class="card-courses-title">
-                            <h4><a href="{% url 'course:course_detail' comment.course.pk comment.course.slug %}" >{{ comment.course.title }}</a></h4>
+                            <h4><a href="{% url 'course:course_detail' comment.content_object.pk comment.content_object.slug %}" >{{ comment.course.title }}</a></h4>
                         </div>
                         <div class="card-courses-list-bx">
                             <ul class="card-courses-view">

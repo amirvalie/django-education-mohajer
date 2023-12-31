@@ -23,7 +23,7 @@ class Comment(models.Model):
         User,
         null=True,
         on_delete=models.SET_NULL,
-        related_name="blog_comments",
+        related_name="comments",
         verbose_name="کاربر",
     )
     message = models.TextField(verbose_name="نظر")
