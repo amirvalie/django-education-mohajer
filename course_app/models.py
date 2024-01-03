@@ -17,6 +17,7 @@ from django.db.models import Q
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.utils.html import format_html
+from extensions.resize_image import ResizeImage
 
 # generate image name
 
@@ -209,6 +210,11 @@ class Course(models.Model):
         verbose_name = "دوره"
         verbose_name_plural = "دوره ها"
         ordering = ["-publish_time"]
+
+    def save(self, *args, **kwargs):
+        resize_img = ResizeImage(self.image)
+        resize_img.save(self.image, (480, 480))
+        super(Course, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
