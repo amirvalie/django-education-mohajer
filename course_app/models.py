@@ -18,6 +18,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.utils.html import format_html
 from extensions.resize_image import ResizeImage
+from djrichtextfield.models import RichTextField
 
 # generate image name
 
@@ -166,7 +167,7 @@ class Course(models.Model):
         verbose_name="مدرس",
     )
     image = models.ImageField(upload_to=upload_image_path, verbose_name="تصویر")
-    description = RichTextField(verbose_name="توضیحات")
+    description = RichTextField()
     price = models.PositiveIntegerField(verbose_name="قیمت")
     discount = models.PositiveIntegerField(
         blank=True,

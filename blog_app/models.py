@@ -68,6 +68,9 @@ class BlogTag(models.Model):
         return self.title
 
 
+from djrichtextfield.models import RichTextField
+
+
 class Blog(models.Model):
     author = models.ForeignKey(
         User,
@@ -78,7 +81,7 @@ class Blog(models.Model):
     )
     title = models.CharField(max_length=300, verbose_name="عنوان مقاله")
     slug = models.CharField(max_length=300, verbose_name="عنوان در url", blank=True)
-    description = RichTextUploadingField(verbose_name="محتوا")
+    description = RichTextField()
     image = models.ImageField(upload_to=upload_image_path, verbose_name="تصویر مقاله")
     tags = models.ManyToManyField(
         BlogTag, related_name="blogs", blank=True, verbose_name="تگ ها / برچسب ها"

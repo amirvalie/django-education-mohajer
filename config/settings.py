@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "ckeditor",
     "ckeditor_uploader",
     "azbankgateways",
+    "djrichtextfield",
     # MY APPS
     "account_app",
     "course_app",
@@ -133,6 +134,17 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+DJRICHTEXTFIELD_CONFIG = {
+    "js": ["//cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"],
+    "init_template": "djrichtextfield/init/tinymce.js",
+    "settings": {
+        "menubar": False,
+        "plugins": "link image",
+        "toolbar": "bold italic | link image | removeformat",
+        "width": 700,
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
