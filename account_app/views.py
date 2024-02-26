@@ -53,13 +53,11 @@ class Register(CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        # messages.error(self.request, 'یه مشکلی هست ، ببین ارور چی میگه ! ( اعتبار سنجی یادت نره )', 'danger')
         return super().form_invalid(form)
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect("/")
-
         return super().dispatch(request, *args, **kwargs)
 
 

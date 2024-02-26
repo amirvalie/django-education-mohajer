@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "ckeditor",
     "ckeditor_uploader",
     "azbankgateways",
-    "captcha",
     # MY APPS
     "account_app",
     "course_app",
@@ -104,6 +103,18 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "django_education",
+#         "USER": "amir",
+#         "PASSWORD": "amir",
+#         "HOST": "127.0.0.1",  # Set to the address of your database server
+#         "PORT": "5432",  # Set to the port of your database server
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -225,8 +236,4 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-
-# recaptcha
-RECAPTCHA_PUBLIC_KEY = config("RECAPTCHA_PUBLIC_KEY")
-RECAPTCHA_PRIVATE_KEY = config("RECAPTCHA_PRIVATE_KEY")
+EMAIL_HOST_PASSWORD = "zgkr gnic ksvk lilp"

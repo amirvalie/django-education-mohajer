@@ -9,6 +9,7 @@ from django.utils.html import format_html
 
 # generate image name
 
+
 def get_filename_ext(filepath):
     base_name = os.path.basename(filepath)
     name, ext = os.path.splitext(base_name)
@@ -23,40 +24,57 @@ def upload_avatar_path(instance, filename):
 
 
 class User(AbstractUser):
-    email = models.EmailField(unique=True, verbose_name='آدرس ایمیل')
-    is_teacher = models.BooleanField(default=False, verbose_name='وضعیت مدرسی')
-    is_student = models.BooleanField(default=False, verbose_name='وضعیت دانشجویی')
-    send_email = models.BooleanField(default=True, verbose_name='ارسال ایمیل')
+    email = models.EmailField(unique=True, verbose_name="آدرس ایمیل")
+    is_teacher = models.BooleanField(default=False, verbose_name="وضعیت مدرسی")
+    is_student = models.BooleanField(default=False, verbose_name="وضعیت دانشجویی")
+    send_email = models.BooleanField(default=True, verbose_name="ارسال ایمیل")
 
     class Meta:
         verbose_name = "کاربر"
         verbose_name_plural = "کاربران"
-        ordering = ['-is_superuser', '-is_teacher']
+        ordering = ["-is_superuser", "-is_teacher"]
 
     def fullname_or_username(self):
         if self.get_full_name():
             return self.get_full_name()
         else:
-            return self.username    
+            return self.username
 
 
 class Profile(models.Model):
     # validator
-    phone_number_validator = RegexValidator(regex=r'^[0][9]\d{9}$',message='شماره موبایل نامعتبر است.',flags=0,)
-    #end validator
-    
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name='کاربر')
-    phone_number = models.CharField(max_length=11,unique=True,verbose_name='شماره موبایل',validators=[phone_number_validator],blank=True,null=True)
-    web_site = models.URLField(blank=True, null=True, verbose_name='آدرس وب سایت')
-    bio = models.TextField(max_length=700, blank=True, null=True, verbose_name='بیوگرافی')
-    avatar = models.ImageField(upload_to=upload_avatar_path, blank=True, null=True, verbose_name='تصویر آواتار')
-    create_time = models.DateTimeField(auto_now_add=True,verbose_name='زمان ایجاد')
-    update_time = models.DateTimeField(auto_now=True,verbose_name='زمان بروزرسانی')
+    phone_number_validator = RegexValidator(
+        regex=r"^[0][9]\d{9}$",
+        message="شماره موبایل نامعتبر است.",
+        flags=0,
+    )
+    # end validator
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="profile", verbose_name="کاربر"
+    )
+    phone_number = models.CharField(
+        max_length=11,
+        unique=True,
+        verbose_name="شماره موبایل",
+        validators=[phone_number_validator],
+        blank=True,
+        null=True,
+    )
+    web_site = models.URLField(blank=True, null=True, verbose_name="آدرس وب سایت")
+    bio = models.TextField(
+        max_length=700, blank=True, null=True, verbose_name="بیوگرافی"
+    )
+    avatar = models.ImageField(
+        upload_to=upload_avatar_path, blank=True, null=True, verbose_name="تصویر آواتار"
+    )
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name="زمان ایجاد")
+    update_time = models.DateTimeField(auto_now=True, verbose_name="زمان بروزرسانی")
 
     class Meta:
-        verbose_name = 'پروفایل'
-        verbose_name_plural = 'پروفایل ها'
-        ordering = ['-create_time']
+        verbose_name = "پروفایل"
+        verbose_name_plural = "پروفایل ها"
+        ordering = ["-create_time"]
 
     def __str__(self):
         return f"{str(self.user)}"
@@ -64,38 +82,43 @@ class Profile(models.Model):
     def jalali_time(self):
         return jalali_converter(self.create_time)
 
-    jalali_time.short_description = 'زمان ایجاد'
-    
+    jalali_time.short_description = "زمان ایجاد"
+
     def jalali_update_time(self):
         return jalali_converter(self.update_time)
 
-    jalali_update_time.short_description = 'آخرین بروزرسانی'
+    jalali_update_time.short_description = "آخرین بروزرسانی"
 
     def get_bio(self):
         if self.bio:
             if len(self.bio) <= 100:
                 return self.bio[:100]
             else:
-                return f'{self.bio[:100]} ...'    
+                return f"{self.bio[:100]} ..."
         else:
-            return ''
-    get_bio.short_description = 'پیام'
+            return ""
+
+    get_bio.short_description = "پیام"
 
     def get_avatar(self):
         try:
             return self.avatar.url
         except:
-            return '/static/images/testimonials/pic2.jpg'
-    
+            return "/static/images/testimonials/pic2.jpg"
+
     def show_avatar_in_admin(self):
         return format_html(
-            "<img style='border-radius: 50px' width=55px height=55px  src='{}' >".format(self.get_avatar()))
+            "<img style='border-radius: 50px' width=55px height=55px  src='{}' >".format(
+                self.get_avatar()
+            )
+        )
 
-    show_avatar_in_admin.short_description = 'آواتار'
+    show_avatar_in_admin.short_description = "آواتار"
+
 
 def create_profile(sender, **kwargs):
-    if kwargs['created']:
-        profile = Profile(user=kwargs['instance'])
+    if kwargs["created"]:
+        profile = Profile(user=kwargs["instance"])
         profile.save()
 
 

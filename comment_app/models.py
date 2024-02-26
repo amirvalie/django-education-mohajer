@@ -61,6 +61,7 @@ class Comment(models.Model):
         if self.pk:
             self.old_object = Comment.objects.get(id=self.pk)
             if self.active == True and self.old_object.active == False:
+                print("************ send email ************")
                 mail = SendMail(self)
                 mail.send_email()
         super().save()

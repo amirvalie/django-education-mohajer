@@ -15,6 +15,7 @@ from django.db.models.signals import pre_save, post_save
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.html import format_html, strip_tags, html_safe
+from extensions.send_mail import SendMail
 
 
 # generate image name
@@ -101,31 +102,11 @@ class Blog(models.Model):
 
     def save(self):
         if self.pk:
-            old = Blog.objects.get(pk=self.pk)
-            if self.status == True and old.status == False:
-                # sned email
-                users = User.objects.filter(send_email=True)
-                users_email = [user.email for user in users]
-                current_site = "127.0.0.1:8000"
-                blog_url = f"{current_site}{reverse('blog:blog_detail', kwargs={'pk': self.pk, 'slug': self.slug})}"
-                blog_title = self.title
-                blog_author = self.get_author_name()
-                if users_email:
-                    subject = f"ایجوکمپ | مقاله جدیدی با عنوان {blog_title} انتشار یافت"
-                    message = f"مقاله جدیدی با عنوان {blog_title} توسط {blog_author} انتشار یافت روی لینک زیر کلیلک کنید و آن را مطالعه کنید."
-                    EmailService.send_email(
-                        subject,
-                        users_email,
-                        "email/blog-create.html",
-                        {
-                            "head_title": subject,
-                            "message": message,
-                            "blog_url": blog_url,
-                            "blog_title": blog_title,
-                        },
-                    )
-                # end send email
-        super(Blog, self).save()
+            self.old_object = Blog.objects.get(id=self.pk)
+            if self.status == True and self.old_object.status == False:
+                mail = SendMail(self)
+                mail.send_email()
+        super().save()
 
     def __str__(self):
         return self.title
@@ -185,31 +166,4 @@ def set_blog_slug(sender, instance, *args, **kwargs):
     instance.slug = instance.title.replace(" ", "-")
 
 
-def send_blog_email(sender, instance, created, *args, **kwargs):
-    if created and instance.status == True:
-        # sned email
-        users = User.objects.filter(send_email=True)
-        users_email = [user.email for user in users]
-        current_site = "127.0.0.1:8000"
-        blog_url = f"{current_site}{reverse('blog:blog_detail', kwargs={'pk': instance.pk, 'slug': instance.slug})}"
-        blog_title = instance.title
-        blog_author = instance.get_author_name()
-        if users_email:
-            subject = f"ایجوکمپ | مقاله جدیدی با عنوان {blog_title} انتشار یافت"
-            message = f"مقاله جدیدی با عنوان {blog_title} توسط {blog_author} انتشار یافت روی لینک زیر کلیلک کنید و آن را مطالعه کنید."
-            EmailService.send_email(
-                subject,
-                users_email,
-                "email/blog-create.html",
-                {
-                    "head_title": subject,
-                    "message": message,
-                    "blog_url": blog_url,
-                    "blog_title": blog_title,
-                },
-            )
-        # end send email
-
-
 pre_save.connect(set_blog_slug, Blog)
-post_save.connect(send_blog_email, Blog)
